@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Image, Alert} from 'react-native';
+import {View, Text, StyleSheet, Image, Alert, TouchableWithoutFeedback, Linking} from 'react-native';
 import {TextInput, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -41,8 +41,9 @@ const Login = ({navigation}) => {
         navigation.navigate('Profile', {userInfo: data.userInfo});
       } else {
         Alert.alert(
-          'API Error',
-          data.api_status_code + ' - ' + data.api_message,
+          'เกิดข้อผิดพลาด',
+          // data.api_status_code + ' - ' + data.api_message,
+          'กรอก Username/Password ผิด'
         );
       }
     } catch (error) {
@@ -57,24 +58,37 @@ const Login = ({navigation}) => {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={require('../image/logo-green.png')}
-          style={{width: 300, height: 110}}
+          source={require('../image/icit_account_logo.png')}
+          style={{width: 300, height: 120}}
         />
       </View>
+
+      {/* form */}
       <View style={styles.inputContainer}>
         <TextInput
-          label="Username"
+          placeholder="Username"
           value={username}
           onChangeText={text => setUsername(text)}
         />
         <TextInput
-          label="Password"
+          placeholder="Password"
           secureTextEntry
           right={<TextInput.Icon icon="eye" />}
           value={password}
           onChangeText={text => setPassword(text)}
         />
       </View>
+      
+      {/* ลืมรหัสผ่าน */}
+      <View style={styles.textContainer}>
+        <TouchableWithoutFeedback onPress={() => Linking.openURL('https://account.kmutnb.ac.th/web/recovery/index')}>
+          <Text style={styles.label}>ลืมรหัสผ่าน</Text>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => Linking.openURL('https://account.kmutnb.ac.th/web/personnel/activation')}>
+          <Text style={styles.label}>เปิดการใช้งานบัญชี</Text>
+        </TouchableWithoutFeedback>
+      </View>
+
       <View style={styles.buttonContainer}>
         <Button mode="contained" onPress={handleLogin}>
           Login
@@ -96,13 +110,22 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignSelf: 'center',
-    paddingBottom: 60,
+    paddingBottom: 50,
   },
   inputContainer: {
-    paddingBottom: 15,
+    paddingBottom: 20,
   },
   buttonContainer: {
-    width: '50%',
+    width: '80%',
     alignSelf: 'center',
+    fontWeight: 'bold',
+  },
+  textContainer: {
+    alignSelf: 'left',
+    paddingBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    padding: 3,
   },
 });
