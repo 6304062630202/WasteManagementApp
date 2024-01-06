@@ -62,16 +62,19 @@ const Login = ({navigation}) => {
           style={{width: 300, height: 120}}
         />
       </View>
+      <Text style={styles.tiltle}>ชื่อผู้ใช้งาน & รหัสผ่าน ชอง ICIT Account</Text>
 
       {/* form */}
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Username"
+          style={styles.input}
+          placeholder="ชื่อผู้ใช้"
           value={username}
           onChangeText={text => setUsername(text)}
         />
         <TextInput
-          placeholder="Password"
+          style={styles.input}
+          placeholder="รหัสผ่าน"
           secureTextEntry
           right={<TextInput.Icon icon="eye" />}
           value={password}
@@ -91,7 +94,7 @@ const Login = ({navigation}) => {
 
       <View style={styles.buttonContainer}>
         <Button mode="contained" onPress={handleLogin}>
-          Login
+          เข้าสู่ระบบ
         </Button>
       </View>
     </View>
@@ -110,22 +113,39 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignSelf: 'center',
-    paddingBottom: 50,
+    paddingBottom: 10,
+  },
+  tiltle: {
+    fontSize: 16,
+    color: 'green',
+    padding: 10,
+    textDecorationLine: 'underline',
   },
   inputContainer: {
-    paddingBottom: 20,
+    paddingBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 5,
+    height: 55,
+    paddingVertical: 0,
+    backgroundColor: 'white',
   },
   buttonContainer: {
-    width: '80%',
+    width: '100%',
     alignSelf: 'center',
     fontWeight: 'bold',
   },
   textContainer: {
-    alignSelf: 'left',
     paddingBottom: 20,
   },
   label: {
     fontSize: 16,
     padding: 3,
+    color: 'black',
+    fontWeight: 'bold',
   },
 });
