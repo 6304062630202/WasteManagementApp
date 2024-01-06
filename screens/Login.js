@@ -2,10 +2,14 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image, Alert, TouchableWithoutFeedback, Linking} from 'react-native';
 import {TextInput, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [eyeIcon, setEyeIcon] = useState(faEye);
 
   const handleLogin = async () => {
     try {
@@ -38,7 +42,7 @@ const Login = ({navigation}) => {
       } else if (data.api_status === 'success') {
         // Alert.alert('Login success', JSON.stringify(data.userInfo));
         await AsyncStorage.setItem('@access_token', access_token);
-        navigation.navigate('Profile', {userInfo: data.userInfo});
+        navigation.navigate('NavBar', {userInfo: data.userInfo});
       } else {
         Alert.alert(
           'เกิดข้อผิดพลาด',
@@ -52,6 +56,12 @@ const Login = ({navigation}) => {
         {text: 'OK', onPress: () => console.log('Network Error')},
       ]);
     }
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+    // Toggle the eye icon
+    setEyeIcon(showPassword ? faEye : faEyeSlash);
   };
 
   return (
@@ -72,14 +82,20 @@ const Login = ({navigation}) => {
           value={username}
           onChangeText={text => setUsername(text)}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="รหัสผ่าน"
-          secureTextEntry
-          right={<TextInput.Icon icon="eye" />}
-          value={password}
-          onChangeText={text => setPassword(text)}
-        />
+        <View style={styles.passwordInput}>
+          <TextInput
+            style={[{ flex: 1, backgroundColor: 'white' }]}
+            placeholder="รหัสผ่าน"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+          <TouchableWithoutFeedback onPress={toggleShowPassword}>
+            <View style={styles.iconContainer}>
+              <FontAwesomeIcon icon={eyeIcon} size={20} color="black" />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
       </View>
       
       {/* ลืมรหัสผ่าน */}
@@ -133,6 +149,20 @@ const styles = StyleSheet.create({
     height: 55,
     paddingVertical: 0,
     backgroundColor: 'white',
+  },
+  passwordInput: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: 'gray',
+    marginVertical: 10,
+    borderRadius: 5,
+    height: 55,
+    backgroundColor: 'white',
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
   },
   buttonContainer: {
     width: '100%',
