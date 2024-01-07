@@ -1,14 +1,14 @@
-import {View, Text} from 'react-native';
 import React from 'react';
+import { View } from 'react-native';
 import Home from './Home';
 import Coins from './Coins';
 import Scan from './Scan';
 import Notification from './Notification';
-import Profile from './Profile';
+import Setting from './Setting';
+import { COLORS } from '../contrants/COLORS'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHome, faCoins, faBarcode, faBell, faUser } from '@fortawesome/free-solid-svg-icons';
-
 
 const Tab = createBottomTabNavigator();
 
@@ -20,20 +20,30 @@ const tabBarStyle = {
   borderTopRightRadius: 40,
 };
 
-const COLORS = {
-  blue: '#87CEFA',
-  gray: '#BEBEBE',
-};
+const CircleIcon = ({ children, focused }) => (
+  <View
+    style={{
+      top: -40,
+      backgroundColor: COLORS.blue,
+      borderRadius: 50,
+      width: 80,
+      height: 80,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+    {children}
+  </View>
+);
 
 const NavBar = () => {
   return (
     <Tab.Navigator
-      initalRouteName="Home"
-      activeColor="#EB6A58"
+      initialRouteName="Home"
       tabBarHideKeyBoard={true}
       headerShown={false}
-      inactiveColor="#3e2465"
-      barStyle={{paddingBottom: 48}}>
+      barStyle={{ paddingBottom: 48 }}
+    >
       <Tab.Screen
         name="Home"
         component={Home}
@@ -41,7 +51,7 @@ const NavBar = () => {
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <FontAwesomeIcon
               icon={faHome}
               color={focused ? COLORS.blue : COLORS.gray}
@@ -58,7 +68,7 @@ const NavBar = () => {
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <FontAwesomeIcon
               icon={faCoins}
               color={focused ? COLORS.blue : COLORS.gray}
@@ -75,12 +85,14 @@ const NavBar = () => {
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <FontAwesomeIcon
-              icon={faBarcode}
-              color={focused ? COLORS.blue : COLORS.gray}
-              size={28}
-            />
+          tabBarIcon: ({ focused }) => (
+            <CircleIcon focused={focused}>
+              <FontAwesomeIcon
+                icon={faBarcode}
+                color={focused ? COLORS.white : COLORS.white}
+                size={28}
+              />
+            </CircleIcon>
           ),
         }}
       />
@@ -92,7 +104,7 @@ const NavBar = () => {
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <FontAwesomeIcon
               icon={faBell}
               color={focused ? COLORS.blue : COLORS.gray}
@@ -103,13 +115,13 @@ const NavBar = () => {
       />
 
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="Setting"
+        component={Setting}
         options={{
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <FontAwesomeIcon
               icon={faUser}
               color={focused ? COLORS.blue : COLORS.gray}
