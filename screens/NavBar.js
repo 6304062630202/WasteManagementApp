@@ -1,14 +1,19 @@
 import React from 'react';
-import { View } from 'react-native';
+import {View, Image} from 'react-native';
 import Home from './Home';
 import Coins from './Coins';
 import Scan from './Scan';
 import Notification from './Notification';
 import Setting from './Setting';
-import { COLORS } from '../contrants/COLORS'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faHome, faCoins, faBarcode, faBell, faUser } from '@fortawesome/free-solid-svg-icons';
+import {COLORS} from '../contrants/COLORS';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {
+  faHome,
+  faCoins,
+  faBell,
+  faUser,
+} from '@fortawesome/free-solid-svg-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,20 +23,20 @@ const tabBarStyle = {
   position: 'absolute',
   borderTopLeftRadius: 40,
   borderTopRightRadius: 40,
+  paddingBottom: 10,
 };
 
-const CircleIcon = ({ children, focused }) => (
+const CircleIcon = ({children, focused}) => (
   <View
     style={{
-      top: -40,
-      backgroundColor: COLORS.blue,
-      borderRadius: 50,
-      width: 80,
-      height: 80,
+      top: -35,
+      backgroundColor: COLORS.BUTTON_COLOR,
+      borderRadius: 70,
+      width: 70,
+      height: 70,
       justifyContent: 'center',
       alignItems: 'center',
-    }}
-  >
+    }}>
     {children}
   </View>
 );
@@ -42,8 +47,7 @@ const NavBar = () => {
       initialRouteName="Home"
       tabBarHideKeyBoard={true}
       headerShown={false}
-      barStyle={{ paddingBottom: 48 }}
-    >
+      barStyle={{paddingBottom: 48}}>
       <Tab.Screen
         name="Home"
         component={Home}
@@ -51,11 +55,11 @@ const NavBar = () => {
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({focused}) => (
             <FontAwesomeIcon
               icon={faHome}
-              color={focused ? COLORS.blue : COLORS.gray}
-              size={28}
+              color={focused ? COLORS.BUTTON_COLOR : COLORS.SECONDARY_COLOR}
+              size={26}
             />
           ),
         }}
@@ -68,11 +72,11 @@ const NavBar = () => {
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({focused}) => (
             <FontAwesomeIcon
               icon={faCoins}
-              color={focused ? COLORS.blue : COLORS.gray}
-              size={28}
+              color={focused ? COLORS.BUTTON_COLOR : COLORS.SECONDARY_COLOR}
+              size={26}
             />
           ),
         }}
@@ -85,12 +89,11 @@ const NavBar = () => {
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({focused}) => (
             <CircleIcon focused={focused}>
-              <FontAwesomeIcon
-                icon={faBarcode}
-                color={focused ? COLORS.white : COLORS.white}
-                size={28}
+              <Image
+                source={require('../image/barcode-icon.png')}
+                style={{width: 30, height: 24}}
               />
             </CircleIcon>
           ),
@@ -104,11 +107,11 @@ const NavBar = () => {
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({focused}) => (
             <FontAwesomeIcon
               icon={faBell}
-              color={focused ? COLORS.blue : COLORS.gray}
-              size={28}
+              color={focused ? COLORS.BUTTON_COLOR : COLORS.SECONDARY_COLOR}
+              size={26}
             />
           ),
         }}
@@ -121,11 +124,11 @@ const NavBar = () => {
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({focused}) => (
             <FontAwesomeIcon
               icon={faUser}
-              color={focused ? COLORS.blue : COLORS.gray}
-              size={28}
+              color={focused ? COLORS.BUTTON_COLOR : COLORS.SECONDARY_COLOR}
+              size={26}
             />
           ),
         }}

@@ -1,6 +1,8 @@
 export const COLORS = {
-    blue: '#87CEFA',
-    gray: '#BEBEBE',
-    white: '#FFFFFF',
-  };
-  
+  PRIMARY_COLOR: '#87CEFA',
+  SECONDARY_COLOR: '#6c757d',
+  BACKGROUND_COLOR: '#ffffff',
+  TEXT_COLOR: '#000000',
+  BUTTON_COLOR: '#F86F03',
+  ERROR_COLOR: '#dc3545',
+};
