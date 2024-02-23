@@ -12,6 +12,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/Login-style';
+import {
+  doc,
+  getDocs,
+  collection,
+  addDoc,
+  query,
+  where,
+} from 'firebase/firestore';
+import {db} from '../firebase';
 
 const Login = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -23,11 +32,9 @@ const Login = ({navigation}) => {
   const handleLogin = async () => {
     try {
       const access_token = 'C6a8DV5dQo_UkF3-uucgxN5faKh4DQZF';
-
       const api_url =
         'https://api.account.kmutnb.ac.th/api/account-api/user-authen';
       const scopes = 'personel,student,templecturer';
-
       const post_data = {
         scopes: scopes,
         username: username,
@@ -47,22 +54,44 @@ const Login = ({navigation}) => {
       const data = await response.json();
 
       if (!data.api_status) {
-        setError(true); // Set error state to true
+        setError(true); // ข้อมูลไม่ถูกต้อง
         Alert.alert('เกิดข้อผิดพลาด', 'ไม่พบ Username/Password');
       } else if (data.api_status === 'success') {
-        setError(false); // Reset error state to false on successful login
+        setError(false); // ข้อมูลถูกต้อง
         await AsyncStorage.setItem('@access_token', access_token);
-        navigation.navigate('NavBar', {userInfo: data.userInfo});
+
+        // ตรวจสอบว่ามีข้อมูลผู้ใช้นี้ใน Firestore หรือไม่
+        const userQuery = query(
+          collection(db, 'Users'),
+          where('username', '==', data.userInfo.username),
+        );
+        const userQuerySnapshot = await getDocs(userQuery);
+
+        if (userQuerySnapshot.empty) {
+          // ถ้ายังไม่มีข้อมูลผู้ใช้นี้ใน Firestore ให้เพิ่มข้อมูล
+          addDoc(collection(db, 'Users'), {
+            username: data.userInfo.username,
+            email: data.userInfo.email,
+            displayname: data.userInfo.displayname,
+            firstname_en: data.userInfo.firstname_en,
+            lastname_en: data.userInfo.lastname_en,
+          })
+            .then(() => {
+              console.log('User data submitted to Firestore');
+            })
+            .catch(error => {
+              console.error('Error adding user data: ', error);
+            });
+        }
+
+        navigation.navigate('NavBar', {username: data.userInfo.username});
       } else {
-        setError(true); // Set error state to true
+        setError(true);
         Alert.alert('เกิดข้อผิดพลาด', 'ไม่พบ Username/Password');
       }
     } catch (error) {
-      setError(true); // Set error state to true
-      console.error('Error:', error);
-      Alert.alert('Network Error', 'Unable to connect to the server.', [
-        {text: 'OK', onPress: () => console.log('Network Error')},
-      ]);
+      setError(true); // เกิดข้อผิดพลาด
+      Alert.alert('เกิดข้อผิดพลาด', 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
     }
   };
 
