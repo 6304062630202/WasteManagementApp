@@ -41,7 +41,7 @@ const CircleIcon = ({children, focused}) => (
   </View>
 );
 
-const NavBar = () => {
+const NavBar = ({route}) => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -120,6 +120,7 @@ const NavBar = () => {
       <Tab.Screen
         name="Setting"
         component={Setting}
+        initialParams={{username: route.params.username}}
         options={{
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
