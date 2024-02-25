@@ -48,7 +48,7 @@ const Login = ({navigation}) => {
           Authorization: 'Bearer ' + access_token,
         },
         body: new URLSearchParams(post_data).toString(),
-        timeout: 10000, // 10 seconds
+        timeout: 5000,
       });
 
       const data = await response.json();

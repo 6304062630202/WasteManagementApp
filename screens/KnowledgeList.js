@@ -1,23 +1,49 @@
-import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { getDownloadURL, ref } from 'firebase/storage';
+import { db, storage } from '../firebase';
 import styles from '../styles/Home-style';
 
 const KnowledgeList = () => {
-  // สมมติข้อมูล
-  const garbageData = [
-    { id: 1, title: 'ประโยชน์ของการแยกขยะ', image: require('../image/img1.jpg') },
-    { id: 2, title: 'วิธีการทำลายขยะที่เป็นพิษ', image: require('../image/img1.jpg') },
-    { id: 3, title: 'วิธีการแยกขยะ', image: require('../image/img1.jpg') },
-    { id: 4, title: 'การรีไซเคิล', image: require('../image/img1.jpg') },
-  ];
+  const [ecoKnowledge, setEcoKnowledge] = useState([]);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchEcoKnowledge = async () => {
+      try {
+        const knowledgeCollectionRef = collection(db, 'Eco_knowledge');
+        const querySnapshot = await getDocs(knowledgeCollectionRef);
+        const knowledgeData = await Promise.all(querySnapshot.docs.map(async doc => {
+          try {
+            const imageUrl = await getDownloadURL(ref(storage, `knowledge/${doc.data().image}.jpg`));
+            return {
+              id: doc.id,
+              title: doc.data().title,
+              image: { uri: imageUrl }
+            };
+          } catch (error) {
+            console.error(`Error fetching image for document ${doc.id}:`, error);
+            return null;
+          }
+        }));
+        setEcoKnowledge(knowledgeData.filter(Boolean));
+      } catch (error) {
+        console.error('Error fetching eco knowledge:', error);
+      }
+    };    
+
+    fetchEcoKnowledge();
+  }, []);
 
   const handleItemPress = (item) => {
-    console.log(item);
+    navigation.navigate('Eco_knowledge', { item });
   };
 
-  const renderItem = ({item}) => (
+  const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
-      <Image source={item.image} style={styles.itemImage} />
+      <Image source={item.image} style={styles.itemImage} resizeMode="contain" />
       <Text style={styles.itemTitle}>{item.title}</Text>
     </TouchableOpacity>
   );
@@ -26,7 +52,7 @@ const KnowledgeList = () => {
     <View>
       <Text style={styles.title}>เรื่องน่ารู้เกี่ยวกับขยะ</Text>
       <FlatList
-        data={garbageData}
+        data={ecoKnowledge}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         horizontal

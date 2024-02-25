@@ -25,16 +25,12 @@ const styles = StyleSheet.create({
 
   title: {
     paddingBottom: 10,
+    marginTop: 10,
     paddingLeft: 20,
     fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
     alignSelf: 'flex-start',
-  },
-  
-  map_img: {
-    alignItems: 'center',
-    paddingBottom: 30,
   },
 
   itemContainer: {
@@ -54,7 +50,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
   },
-  
+
   itemImage: {
     width: 150,
     height: 100,
@@ -64,6 +60,13 @@ const styles = StyleSheet.create({
   itemTitle: {
     fontSize: 16,
     textAlign: 'center',
+  },
+
+  map: {
+    width: 320,
+    height: 200,
+    alignSelf: 'center',
+    marginBottom: 16,
   },
 });
 

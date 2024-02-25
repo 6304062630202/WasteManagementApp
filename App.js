@@ -7,6 +7,7 @@ import Home from './screens/Home';
 import NavBar from './screens/NavBar';
 import Search from './screens/Search';
 import Setting from './screens/Setting';
+import Eco_knowledge from './screens/Eco_knowledge';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,9 +35,14 @@ const App = () => {
           component={Search} 
           options={{headerShown: false}}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="Setting"
           component={Setting} 
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Eco_knowledge"
+          component={Eco_knowledge} 
           options={{headerShown: false}}
         />
       </Stack.Navigator>
