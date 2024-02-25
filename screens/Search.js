@@ -10,13 +10,6 @@ const Search = () => {
   const navigation = useNavigation();
   const [searchInput, setSearchInput] = useState('');
   
-  // ข้อมูลขยะ
-  const garbageData = [
-    { id: 1, title: 'ประโยชน์ของการแยกขยะ', description: 'การแยกขยะช่วยลดปริมาณขยะที่เกิดขึ้นในสิ่งแวดล้อม และสร้างวงจรเศรษฐกิจเพื่อการนำกลับของวัสดุรีไซเคิล' },
-    { id: 2, title: 'วิธีการทำลายขยะที่เป็นพิษ', description: 'การทำลายขยะที่เป็นพิษต้องทำอย่างระมัดระวังเพื่อป้องกันการปล่อยสารพิษออกมาสู่สิ่งแวดล้อม' },
-    { id: 3, title: 'การรีไซเคิล', description: 'การรีไซเคิลเป็นกระบวนการให้วัสดุที่ใช้งานแล้วกลับมาใช้ใหม่ ซึ่งช่วยลดปริมาณขยะที่เกิดขึ้นในสิ่งแวดล้อม' },
-  ];
-
   const goBack = () => {
     navigation.goBack();
   };
@@ -28,16 +21,21 @@ const Search = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={goBack} style={styles.backButton}>
-        <FontAwesomeIcon
-          icon={faArrowLeft}
-          size={24}
-          style={styles.icon}
-        />
-        <Text style={styles.text}>ค้นหา</Text>
-      </TouchableOpacity>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={goBack} style={styles.backButton}>
+          <FontAwesomeIcon
+            icon={faArrowLeft}
+            size={24}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <Text style={styles.title}>ค้นหา</Text>
+      </View>
 
+      {/* Search bar */}
       <View style={styles.searchContainer}>
+      <View style={styles.searchBox}>
         <TextInput
           style={styles.searchInput}
           placeholder="พิมพ์เพื่อค้นหา..."
@@ -53,27 +51,44 @@ const Search = () => {
           />
         </TouchableOpacity>
       </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
-    paddingHorizontal: 20,
+    flex: 1,
+    backgroundColor: '#fff',
   },
-  backButton: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    elevation: 5,
+  },
+  backButton: {
+    marginRight: 'auto',
   },
   icon: {
-    marginRight: 20,
+    marginRight: 10,
+    color: '#000'
   },
-  text: {
-    fontSize: 16,
+  title: {
+    fontSize: 18,
     fontWeight: 'bold',
+    marginRight: 230,
+    color: '#000'
   },
   searchContainer: {
+    paddingHorizontal: 20,
+  },
+  searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20,
@@ -86,7 +101,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchIcon: {
-    marginRight: 10,
+    marginLeft: 10,
   },
 });
 

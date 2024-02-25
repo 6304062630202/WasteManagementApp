@@ -10,6 +10,13 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+      
+      <!-- เพิ่ม meta-data element เพื่อระบุ API Key -->
+      <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyATOW--9NDaf5o_Wu-CKuC7TCHN9O0Bz_Q"
+      />
+      
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
