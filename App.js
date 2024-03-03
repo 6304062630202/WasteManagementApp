@@ -8,6 +8,8 @@ import NavBar from './screens/NavBar';
 import Search from './screens/Search';
 import Setting from './screens/Setting';
 import Eco_knowledge from './screens/Eco_knowledge';
+import MyAccount from './screens/MyAccount';
+import History from './screens/History';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,7 +25,7 @@ const App = () => {
         <Stack.Screen
           name="Home"
           component={Home}
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
         />
         <Stack.Screen
           name="NavBar"
@@ -32,17 +34,27 @@ const App = () => {
         />
         <Stack.Screen
           name="Search"
-          component={Search} 
+          component={Search}
           options={{headerShown: false}}
         />
         <Stack.Screen
           name="Setting"
-          component={Setting} 
+          component={Setting}
           options={{headerShown: false}}
         />
         <Stack.Screen
           name="Eco_knowledge"
-          component={Eco_knowledge} 
+          component={Eco_knowledge}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="MyAccount"
+          component={MyAccount}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="History"
+          component={History}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

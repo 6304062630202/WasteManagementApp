@@ -16,7 +16,7 @@ import {
   doc,
   getDocs,
   collection,
-  addDoc,
+  setDoc,
   query,
   where,
 } from 'firebase/firestore';
@@ -69,19 +69,13 @@ const Login = ({navigation}) => {
 
         if (userQuerySnapshot.empty) {
           // ถ้ายังไม่มีข้อมูลผู้ใช้นี้ใน Firestore ให้เพิ่มข้อมูล
-          addDoc(collection(db, 'Users'), {
-            username: data.userInfo.username,
-            email: data.userInfo.email,
-            displayname: data.userInfo.displayname,
-            firstname_en: data.userInfo.firstname_en,
-            lastname_en: data.userInfo.lastname_en,
-          })
-            .then(() => {
-              console.log('User data submitted to Firestore');
-            })
-            .catch(error => {
-              console.error('Error adding user data: ', error);
-            });
+          const userRef = doc(db, 'Users', data.userInfo.username);
+          await setDoc(userRef, {
+            // เพิ่มข้อมูลผู้ใช้
+            ...data.userInfo,
+          });
+
+          console.log('User data submitted to Firestore');
         }
 
         navigation.navigate('NavBar', {username: data.userInfo.username});

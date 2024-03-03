@@ -1,57 +1,68 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, Image, TouchableOpacity, StyleSheet, Linking} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   faUser,
   faHistory,
-  faQuestionCircle,
   faPhone,
   faSignOutAlt,
   faAngleRight,
 } from '@fortawesome/free-solid-svg-icons';
 import {collection, query, where, getDocs} from 'firebase/firestore';
 import {db} from '../firebase';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Setting = ({route, navigation}) => {
   const {username} = route.params;
   const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const usersCollectionRef = collection(db, 'Users');
-        const userQuery = query(
-          usersCollectionRef,
-          where('username', '==', username),
-        );
-        const querySnapshot = await getDocs(userQuery);
+  const fetchUserData = async () => {
+    try {
+      const usersCollectionRef = collection(db, 'Users');
+      const userQuery = query(
+        usersCollectionRef,
+        where('username', '==', username),
+      );
+      const querySnapshot = await getDocs(userQuery);
 
-        if (!querySnapshot.empty) {
-          // ถ้าพบข้อมูลผู้ใช้
-          const userData = querySnapshot.docs[0].data();
-          setUserData(userData);
-        } else {
-          console.log('ไม่พบข้อมูลผู้ใช้');
-        }
-      } catch (error) {
-        console.error('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้:', error);
+      if (!querySnapshot.empty) {
+        // ถ้าพบข้อมูลผู้ใช้
+        const userData = querySnapshot.docs[0].data();
+        setUserData(userData);
+      } else {
+        console.log('ไม่พบข้อมูลผู้ใช้');
       }
-    };
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchUserData();
   }, [username]);
+
+  // เรียกใช้ useFocusEffect เพื่อโหลดข้อมูลเมื่อหน้าจอมีการโฟกัส
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchUserData();
+      return () => {};
+    }, [username])
+  );
 
   const handleLogout = () => {
     // ให้กลับไปที่หน้า Login เมื่อคลิกที่ออกจากระบบ
     navigation.navigate('Login');
   };
 
+  const handleContactUs = () => {
+    Linking.openURL('https://green.kmutnb.ac.th');
+  };
+
   return (
     <View style={styles.container}>
-      {/* Profile Section */}
       <View style={[styles.profileSection, styles.shadow]}>
         <Image
-          source={require('../image/user.png')}
+          source={userData?.profileImage ? {uri: userData.profileImage} : require('../image/user.png')}
           style={styles.profileImage}
         />
         <View style={styles.profileInfo}>
@@ -60,12 +71,22 @@ const Setting = ({route, navigation}) => {
         </View>
       </View>
 
-      {/* Menu Section */}
       <View style={styles.menuSection}>
-        <MenuItem icon={faUser} label="บัญชีของฉัน" />
-        <MenuItem icon={faHistory} label="ประวัติการสแกน" />
-        <MenuItem icon={faQuestionCircle} label="คำถามที่พบบ่อย" />
-        <MenuItem icon={faPhone} label="ติดต่อเรา" />
+        <MenuItem
+          icon={faUser}
+          label="บัญชีของฉัน"
+          onPress={() => navigation.navigate('MyAccount', { username: username })}
+        />
+        <MenuItem
+          icon={faHistory}
+          label="ประวัติการสแกน"
+          onPress={() => navigation.navigate('History', { username: username })}
+        />
+        <MenuItem
+          icon={faPhone}
+          label="ติดต่อเรา"
+          onPress={handleContactUs}
+        />
         <MenuItem
           icon={faSignOutAlt}
           label="ออกจากระบบ"
@@ -113,21 +134,21 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   profileImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 30,
+    width: 80,
+    height: 80,
+    borderRadius: 50,
   },
   profileInfo: {
     marginLeft: 20,
   },
   displayName: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     paddingBottom: 5,
     color: '#000'
   },
   email: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#000',
   },
   menuSection: {
