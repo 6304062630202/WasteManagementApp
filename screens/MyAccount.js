@@ -78,7 +78,7 @@ const MyAccount = ({ route }) => {
         // ผู้ใช้ยกเลิกการเลือกรูปภาพ
         return;
       }
-      console.log(image);
+
       const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
       setProfileImage(imageUri);
     }).catch((error) => {
