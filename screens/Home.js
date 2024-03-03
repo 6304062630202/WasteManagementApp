@@ -1,23 +1,23 @@
-import {View, Text, TouchableOpacity, Image} from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import React, { useState } from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faSearch} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/Home-style';
-import {useNavigation} from '@react-navigation/native';
-import {SIZE} from '../contrants/SIZE';
-import {COLORS} from '../contrants/COLORS';
+import { useNavigation } from '@react-navigation/native';
+import { SIZE } from '../contrants/SIZE';
+import { COLORS } from '../contrants/COLORS';
 import Map from '../screens/Map';
 import KnowledgeList from '../screens/KnowledgeList';
- 
+
 const Home = () => {
   const navigation = useNavigation();
 
   const handleSearchPress = () => {
     navigation.navigate('Search');
   };
-  
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {/* แถบค้นหา */}
       <View style={styles.searchContainer}>
         <TouchableOpacity
@@ -32,10 +32,10 @@ const Home = () => {
         </TouchableOpacity>
       </View>
 
-      <Map/>
-      <KnowledgeList/>
+      <Map />
+      <KnowledgeList />
 
-    </View>
+    </ScrollView>
   );
 };
 
