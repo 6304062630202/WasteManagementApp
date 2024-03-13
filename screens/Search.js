@@ -18,6 +18,7 @@ const Search = () => {
   const navigation = useNavigation();
   const [searchInput, setSearchInput] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null); // เพิ่ม state เก็บข้อมูลที่เลือก
 
   const goBack = () => {
     navigation.goBack();
@@ -42,8 +43,10 @@ const Search = () => {
     }
   };
 
-  const navigateToProduct = () => {
-    // Navigate to the Product page
+  const navigateToProduct = item => {
+    // เพิ่มพารามิเตอร์ item
+    setSelectedItem(item); // เก็บข้อมูลที่เลือก
+    navigation.navigate('ProductDetail', {wasteData: item}); // นำข้อมูลที่เลือกไปยังหน้า ProductDetail
   };
 
   return (
@@ -55,7 +58,7 @@ const Search = () => {
         <Text style={styles.title}>ค้นหา</Text>
       </View>
 
-        <View style={styles.searchContainer}>
+      <View style={styles.searchContainer}>
         <View style={styles.searchBox}>
           <TextInput
             style={styles.searchInput}
@@ -75,9 +78,8 @@ const Search = () => {
               style={styles.searchIcon}
             />
           </TouchableOpacity>
-      </View>
         </View>
-        
+      </View>
 
       {searchInput === '' ? (
         <View style={styles.imageContainer}>
@@ -90,7 +92,9 @@ const Search = () => {
       ) : (
         <ScrollView style={styles.resultsContainer}>
           {searchResults.map((result, idx) => (
-            <TouchableOpacity key={idx} onPress={navigateToProduct}>
+            <TouchableOpacity
+              key={idx}
+              onPress={() => navigateToProduct(result)}>
               <View style={styles.resultItem}>
                 <Text style={[styles.normalText, styles.boldText]}>
                   {result.waste_name.split(searchInput).map((part, index) => (
@@ -145,7 +149,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-    backgroundColor: '#ffebcd'
+    backgroundColor: '#ffebcd',
   },
   searchBox: {
     flexDirection: 'row',
@@ -155,7 +159,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderRadius: 30,
     paddingHorizontal: 15,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   searchInput: {
     flex: 1,
