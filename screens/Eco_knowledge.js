@@ -44,7 +44,7 @@ const Eco_knowledge = ({ route }) => {
       
       {/* Content */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Image source={{ uri: itemData?.imageUrl }} style={[styles.image, { resizeMode: 'contain' }]} />
+      <Image source={itemData?.imageUrl ? { uri: itemData.imageUrl } : require('../image/free.png')} style={[styles.image, { resizeMode: 'contain' }]} />
         <Text style={styles.title_data}>{itemData?.title}</Text>
         <View style={styles.dataContainer}>
           {/* ใช้ map เพื่อแสดงข้อมูลใน array */}
