@@ -68,6 +68,7 @@ const NavBar = ({route}) => {
       <Tab.Screen
         name="Coins"
         component={Coins}
+        initialParams={{username: route.params.username}}
         options={{
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
@@ -85,6 +86,7 @@ const NavBar = ({route}) => {
       <Tab.Screen
         name="Scan"
         component={Scan}
+        initialParams={{username: route.params.username}}
         options={{
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,
@@ -103,6 +105,7 @@ const NavBar = ({route}) => {
       <Tab.Screen
         name="Notification"
         component={Notification}
+        initialParams={{username: route.params.username}}
         options={{
           tabBarStyle: tabBarStyle,
           tabBarShowLabel: false,

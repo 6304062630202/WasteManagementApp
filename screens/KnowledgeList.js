@@ -1,56 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
 import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { getDownloadURL, ref } from 'firebase/storage';
-import { db, storage } from '../firebase';
 import styles from '../styles/Home-style';
+import { useNavigation } from '@react-navigation/native';
 
 const KnowledgeList = () => {
-  const [ecoKnowledge, setEcoKnowledge] = useState([]);
   const navigation = useNavigation();
+  const [ecoKnowledge, setEcoKnowledge] = useState([]);
 
   useEffect(() => {
     const fetchEcoKnowledge = async () => {
       try {
-        const knowledgeCollectionRef = collection(db, 'Eco_knowledge');
-        const querySnapshot = await getDocs(knowledgeCollectionRef);
-        const knowledgeData = await Promise.all(querySnapshot.docs.map(async doc => {
-          try {
-            const imageUrl = await getDownloadURL(ref(storage, `knowledge/${doc.data().image}.jpg`));
-            return {
-              id: doc.id,
-              title: doc.data().title,
-              image: { uri: imageUrl }
-            };
-          } catch (error) {
-            console.error(`Error fetching image for document ${doc.id}:`, error);
-            return null;
-          }
-        }));
-        setEcoKnowledge(knowledgeData.filter(Boolean));
+        const response = await fetch('https://wasteappmanage.sci.kmutnb.ac.th/knowledge.php');
+        const knowledgeData = await response.json();
+        setEcoKnowledge(knowledgeData);
       } catch (error) {
         console.error('Error fetching eco knowledge:', error);
       }
-    };    
+    };
 
     fetchEcoKnowledge();
   }, []);
 
   const handleItemPress = (item) => {
+    // ส่งข้อมูลไปยังหน้า Eco_knowledge
     navigation.navigate('Eco_knowledge', { item });
   };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
-      <Image source={item.image} style={styles.itemImage} resizeMode="contain" />
+      <Image source={{ uri: item.image }} style={styles.itemImage} resizeMode="contain" />
       <Text style={styles.itemTitle}>{item.title}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View>
-      <Text style={styles.title}>เรื่องน่ารู้เกี่ยวกับขยะ</Text>
+      <Text style={styles.title}>เรื่องน่ารู้เกี่ยวกับขยะ :</Text>
       <FlatList
         data={ecoKnowledge}
         renderItem={renderItem}

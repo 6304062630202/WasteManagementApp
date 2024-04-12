@@ -1,93 +1,75 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  Alert,
-  TouchableWithoutFeedback,
-  Linking,
-} from 'react-native';
-import {TextInput, Button} from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from 'react';
+import { View, Text, Image, Alert, TouchableWithoutFeedback, Linking } from 'react-native';
+import { TextInput, Button } from 'react-native-paper';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/Login-style';
-import {
-  doc,
-  getDocs,
-  collection,
-  setDoc,
-  query,
-  where,
-} from 'firebase/firestore';
-import {db} from '../firebase';
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [eyeIcon, setEyeIcon] = useState(faEyeSlash);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     try {
-      const access_token = 'C6a8DV5dQo_UkF3-uucgxN5faKh4DQZF';
-      const api_url =
-        'https://api.account.kmutnb.ac.th/api/account-api/user-authen';
-      const scopes = 'personel,student,templecturer';
-      const post_data = {
-        scopes: scopes,
-        username: username,
-        password: password,
-      };
+        setLoading(true);
+        const access_token = 'C6a8DV5dQo_UkF3-uucgxN5faKh4DQZF';
+        const api_url = 'https://api.account.kmutnb.ac.th/api/account-api/user-authen';
+        const scopes = 'personel,student,templecturer';
+        const post_data = {
+            scopes: scopes,
+            username: username,
+            password: password,
+        };
 
-      const response = await fetch(api_url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: 'Bearer ' + access_token,
-        },
-        body: new URLSearchParams(post_data).toString(),
-        timeout: 5000,
-      });
+        const response = await fetch(api_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                Authorization: 'Bearer ' + access_token,
+            },
+            body: new URLSearchParams(post_data).toString(),
+            timeout: 5000,
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!data.api_status) {
-        setError(true); // ข้อมูลไม่ถูกต้อง
-        Alert.alert('เกิดข้อผิดพลาด', 'ไม่พบ Username/Password');
-      } else if (data.api_status === 'success') {
-        setError(false); // ข้อมูลถูกต้อง
-        await AsyncStorage.setItem('@access_token', access_token);
+        if (!data.api_status) {
+            setError(true);
+            setLoading(false);
+            Alert.alert('เกิดข้อผิดพลาด', 'ไม่พบ Username/Password');
+        } else if (data.api_status === 'success') {
+            setError(false);
 
-        // ตรวจสอบว่ามีข้อมูลผู้ใช้นี้ใน Firestore หรือไม่
-        const userQuery = query(
-          collection(db, 'Users'),
-          where('username', '==', data.userInfo.username),
-        );
-        const userQuerySnapshot = await getDocs(userQuery);
+            // ส่งข้อมูลผู้ใช้ data ไปยังสคริปต์ PHP เพื่อบันทึกลงใน MySQL database
+            const php_url = 'https://wasteappmanage.sci.kmutnb.ac.th/login.php';
+            const php_response = await fetch(php_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
 
-        if (userQuerySnapshot.empty) {
-          // ถ้ายังไม่มีข้อมูลผู้ใช้นี้ใน Firestore ให้เพิ่มข้อมูล
-          const userRef = doc(db, 'Users', data.userInfo.username);
-          await setDoc(userRef, {
-            // เพิ่มข้อมูลผู้ใช้
-            ...data.userInfo,
-          });
+            const php_data = await php_response.json();
 
-          console.log('User data submitted to Firestore');
+            // console.log(php_data.message);
+            setLoading(false);
+            navigation.navigate('NavBar', { username: data.userInfo.username });
+        } else {
+            setError(true);
+            setLoading(false);
+            Alert.alert('เกิดข้อผิดพลาด', 'ไม่พบ Username/Password');
         }
-
-        navigation.navigate('NavBar', {username: data.userInfo.username});
-      } else {
-        setError(true);
-        Alert.alert('เกิดข้อผิดพลาด', 'ไม่พบ Username/Password');
-      }
     } catch (error) {
-      setError(true); // เกิดข้อผิดพลาด
-      Alert.alert('เกิดข้อผิดพลาด', 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
+        setError(true);
+        setLoading(false);
+        Alert.alert('เกิดข้อผิดพลาด', 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
     }
-  };
+};
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -99,14 +81,13 @@ const Login = ({navigation}) => {
       <View style={styles.imageContainer}>
         <Image
           source={require('../image/icit_account_logo.png')}
-          style={{width: 250, height: 100}}
+          style={{ width: 250, height: 100 }}
         />
       </View>
       <Text style={styles.tiltle}>
         ชื่อผู้ใช้งาน & รหัสผ่านของ ICIT Account
       </Text>
 
-      {/* form */}
       <View style={styles.inputContainer}>
         <TextInput
           style={[styles.input, error && styles.errorInput]}
@@ -120,7 +101,7 @@ const Login = ({navigation}) => {
         <View style={[styles.passwordInput, error && styles.errorInput]}>
           <TextInput
             style={[
-              {flex: 1, backgroundColor: 'white'},
+              { flex: 1, backgroundColor: 'white' },
               error && styles.errorInput,
             ]}
             placeholder="รหัสผ่าน"
@@ -139,7 +120,6 @@ const Login = ({navigation}) => {
         </View>
       </View>
 
-      {/* ลืมรหัสผ่าน */}
       <View style={styles.textContainer}>
         <TouchableWithoutFeedback
           onPress={() =>
@@ -158,12 +138,21 @@ const Login = ({navigation}) => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button
-          mode="contained"
-          onPress={handleLogin}
-          style={{backgroundColor: '#F86F03'}}>
-          เข้าสู่ระบบ
-        </Button>
+        {loading ? (
+          <Button
+            mode="contained"
+            style={{ backgroundColor: '#F86F03' }}
+            disabled={true}
+            loading={true}
+          />
+        ) : (
+          <Button
+            mode="contained"
+            onPress={handleLogin}
+            style={{ backgroundColor: '#F86F03' }}>
+            เข้าสู่ระบบ
+          </Button>
+        )}
       </View>
     </View>
   );

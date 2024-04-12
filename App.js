@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './screens/Login';
 import Home from './screens/Home';
-import NavBar from './screens/NavBar';
 import Search from './screens/Search';
 import Setting from './screens/Setting';
 import Eco_knowledge from './screens/Eco_knowledge';
@@ -12,7 +11,11 @@ import MyAccount from './screens/MyAccount';
 import History from './screens/History';
 import Scan from './screens/Scan';
 import ProductDetail from './screens/ProductDetail';
-import AddProduct from './screens/AddProduct';
+import NavBar from './screens/NavBar';
+import ProductSearch from './screens/ProductSearch';
+import GreenKmutnb from './screens/GreenKmutnb';
+import ScanQR from './screens/ScanQR';
+import Condition from './screens/Condition';
 
 // ละเว้นคำเตือนที่เราต้องการ
 LogBox.ignoreLogs(['Warning: ...']);
@@ -22,7 +25,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+       <Stack.Navigator>
         <Stack.Screen
           name="Login"
           component={Login}
@@ -31,11 +34,6 @@ const App = () => {
         <Stack.Screen
           name="Home"
           component={Home}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="NavBar"
-          component={NavBar}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -74,8 +72,28 @@ const App = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="AddProduct"
-          component={AddProduct}
+          name="NavBar"
+          component={NavBar}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProductSearch"
+          component={ProductSearch}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="GreenKmutnb"
+          component={GreenKmutnb}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ScanQR"
+          component={ScanQR}
+          options={{ headerShown: false }}
+        />
+      <Stack.Screen
+          name="Condition"
+          component={Condition}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -6,44 +6,28 @@ import {
   StyleSheet,
   Image,
   ScrollView,
-  Alert,
   RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
-const ProductDetail = ({ route }) => {
+const ProductSearch = ({ route }) => {
   const navigation = useNavigation();
-  const { wasteData, username } = route.params;
-  const [isPointAdded, setIsPointAdded] = useState(false);
+  const { wasteData } = route.params;
   const [refreshing, setRefreshing] = useState(false);
 
   const goBack = () => {
     navigation.goBack();
   };
 
-  const addCoins = () => {
-    if (isPointAdded) {
-      Alert.alert('คุณได้สะสมคะแนนแล้ว');
-    } else {
-      navigation.navigate('ScanQR', {
-        wasteData,
-        username,
-        setIsPointAdded,
-      });
-    }
-  };
-
-  const onRefresh = async () => {
+  const onRefresh = () => {
     setRefreshing(true);
-    try {
-      // อาจจะทำการโหลดข้อมูลเพิ่มเติมที่ต้องการอยู่ในนี้
+    // เรียกใช้ฟังก์ชันหรือ API สำหรับโหลดข้อมูลเพิ่มเติม หรือทำการรีเฟรชหน้าจอ
+    // เมื่อโหลดเสร็จสิ้นให้เซ็ต refreshing เป็น false
+    setTimeout(() => {
       setRefreshing(false);
-    } catch (error) {
-      console.error('เกิดข้อผิดพลาดในการโหลดข้อมูลเพิ่มเติม:', error);
-      setRefreshing(false);
-    }
+    }, 2000);
   };
 
   return (
@@ -55,7 +39,7 @@ const ProductDetail = ({ route }) => {
       </View>
 
       <ScrollView
-        style={styles.scrollView}
+        contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
@@ -75,23 +59,20 @@ const ProductDetail = ({ route }) => {
                 <Text style={styles.title}>{wasteData.waste_name}</Text>
                 <Text style={styles.detail}>{wasteData.detail}</Text>
                 <Text style={styles.detail}>{wasteData.waste_no}</Text>
-                <Text style={styles.description}>
-                  ประเภท : {wasteData.waste_type}
-                </Text>
+                <Text style={styles.description}>ประเภท : {wasteData.waste_type}</Text>
                 <Text style={[styles.description, { paddingBottom: 10 }]}>
                   คะแนนที่จะได้รับ : {wasteData.coin}
                 </Text>
-
                 <View style={styles.dataContainer}>
                   <Text style={styles.recycle}>{wasteData.recycle}</Text>
                   <Image
-                    source={
-                      wasteData.bin_url && wasteData.bin_url !== 'null'
-                        ? { uri: wasteData.bin_url }
-                        : require('../image/product.jpg')
-                    }
-                    style={styles.BinImage}
-                  />
+                  source={
+                    wasteData.bin_url && wasteData.bin_url !== 'null'
+                      ? {uri: wasteData.bin_url}
+                      : require('../image/product.jpg')
+                  }
+                  style={styles.BinImage}
+                />
                 </View>
                 <View style={styles.greenBlock}>
                   <Text style={styles.text}>วิธีการจัดการ</Text>
@@ -101,23 +82,6 @@ const ProductDetail = ({ route }) => {
               <Text style={styles.errorText}>No data found</Text>
             )}
           </View>
-        </View>
-
-        <View style={styles.bottomButtons}>
-          <TouchableOpacity
-            onPress={addCoins}
-            style={[
-              styles.button,
-              styles.addCoinButton,
-              isPointAdded
-                ? { backgroundColor: '#C6C6D1' }
-                : { backgroundColor: '#F08080' },
-            ]}
-            disabled={isPointAdded}>
-            <Text style={styles.buttonText}>
-              {isPointAdded ? 'สะสมคะแนนแล้ว' : 'สแกนคิวอาร์โค้ด'}
-            </Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -155,6 +119,7 @@ const styles = StyleSheet.create({
   blockTextContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    paddingBottom: 80,
   },
   blockText: {
     borderRadius: 30,
@@ -183,8 +148,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderColor: '#ccc',
     borderRadius: 50,
-    marginTop: 50,
     marginBottom: 50,
+    marginTop: 50,
     width: '90%',
     paddingTop: 20,
     paddingBottom: 50,
@@ -192,8 +157,7 @@ const styles = StyleSheet.create({
   },
   recycle: {
     paddingTop: 20,
-    paddingLeft: 10,
-    paddingRight: 10,
+    padding: 10,
     fontSize: 16,
     paddingBottom: 20,
   },
@@ -225,29 +189,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: 'red',
   },
-  bottomButtons: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 20,
-    paddingBottom: 50,
-  },
-  button: {
-    borderRadius: 20,
-    height: 60,
-    width: 330,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addCoinButton: {
-    backgroundColor: '#F08080',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  scrollView: {
-    flex: 1,
-  },
 });
 
-export default ProductDetail;
+export default ProductSearch;

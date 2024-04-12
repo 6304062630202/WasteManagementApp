@@ -1,32 +1,50 @@
-import {View, Text, StyleSheet} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {View, Text} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import rubbish_bins from '../data_map.json';
+import axios from 'axios';
 import styles from '../styles/Home-style';
 
 const Map = () => {
+  const [locations, setLocations] = useState([]);
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await axios.get(
+          'https://wasteappmanage.sci.kmutnb.ac.th/locations.php',
+        );
+        setLocations(response.data);
+      } catch (error) {
+        console.error('Error fetching locations:', error);
+      }
+    };
+
+    fetchLocations();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>จุดทิ้งขยะ</Text>
+      <Text style={styles.title}>จุดทิ้งขยะ :</Text>
       <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
-          latitude: 13.8210501, //อาคาร 40 ปี มจพ.
+          latitude: 13.8210501,
           longitude: 100.5140554,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}>
-
-        {rubbish_bins.map(rubbish_bin => (
+        {locations.map(location => (
           <Marker
-            key={rubbish_bin.id.toString()}
-            coordinate={{latitude: rubbish_bin.latitude, longitude: rubbish_bin.longitude}}
-            title={rubbish_bin.title}
-            description={rubbish_bin.description}
+            key={location.id.toString()}
+            coordinate={{
+              latitude: parseFloat(location.latitude), // แปลง String เป็น Double
+              longitude: parseFloat(location.longitude), // แปลง String เป็น Double
+            }}
+            title={location.title}
+            description={location.description}
           />
         ))}
-        
       </MapView>
     </View>
   );

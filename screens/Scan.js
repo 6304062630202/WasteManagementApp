@@ -1,46 +1,88 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  Linking,
+} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { useNavigation } from '@react-navigation/native';
 
-const Scan = () => {
-  const [scannedData, setScannedData] = useState(null);
-  const [loading, setLoading] = useState(false); 
+const Scan = ({ route }) => {
+  const { username } = route.params;
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   const handleBarCodeRead = async ({ data }) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://192.168.254.76:5000/api/waste/${data}`);
+      const response = await fetch(
+        'https://wasteappmanage.sci.kmutnb.ac.th/wastes.php'
+      );
       const result = await response.json();
-  
-      if (!result) {
+
+      if (!result || result.length === 0) {
         console.log('No data found');
-        Alert.alert('ไม่พบข้อมูล', 'ไม่พบข้อมูลสำหรับบาร์โค้ดที่สแกน');
+        Alert.alert('ไม่พบข้อมูล', 'ไม่พบข้อมูลสำหรับบาร์โค้ดที่สแกน', [
+          {
+            text: 'เพิ่มข้อมูล',
+            onPress: () =>
+              Linking.openURL(
+                'https://wasteappmanage.sci.kmutnb.ac.th/webform.php?fbclid=IwAR3jZopLm-85Qa7pYd0IepsKTyHuIVd8NB15CtcWDlAvYQfCT4D_HzCTBT8_aem_AZuJQH0iYE4VosRiOl0mOwMPIlQWfVR09jAQU8t3Is4bhbLHXb4hZxs4xoe09B61y3RxHx303v8b_So6c0t_V5KY'
+              ),
+          },
+          {
+            text: 'ยกเลิก',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+            https,
+          },
+        ]);
       } else {
-        const wasteData = result;
-  
-        if (wasteData) {
-          navigation.navigate('ProductDetail', { wasteData });
+        const foundWaste = result.find((waste) => waste.waste_no === data);
+
+        if (foundWaste) {
+          navigation.navigate('ProductDetail', {
+            wasteData: foundWaste,
+            username: username,
+          });
         } else {
-          console.error('Invalid wasteData structure:', wasteData);
+          console.log('Barcode not found in wastes');
+          Alert.alert('ไม่พบข้อมูล', 'ไม่พบข้อมูลสำหรับบาร์โค้ดที่สแกน', [
+            {
+              text: 'เพิ่มข้อมูล',
+              onPress: () =>
+                Linking.openURL(
+                  'https://wasteappmanage.sci.kmutnb.ac.th/webform.php?fbclid=IwAR3jZopLm-85Qa7pYd0IepsKTyHuIVd8NB15CtcWDlAvYQfCT4D_HzCTBT8_aem_AZuJQH0iYE4VosRiOl0mOwMPIlQWfVR09jAQU8t3Is4bhbLHXb4hZxs4xoe09B61y3RxHx303v8b_So6c0t_V5KY'
+                ),
+            },
+            {
+              text: 'ยกเลิก',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+          ]);
         }
       }
     } catch (error) {
       console.error('Error checking barcode:', error);
-      Alert.alert('เกิดข้อผิดพลาด', 'ไม่สามารถตรวจสอบบาร์โค้ดได้ กรุณาลองใหม่อีกครั้ง');
+      Alert.alert(
+        'เกิดข้อผิดพลาด',
+        'ไม่สามารถตรวจสอบบาร์โค้ดได้ กรุณาลองใหม่อีกครั้ง'
+      );
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
-  };  
-  
+  };
+
   return (
     <View style={styles.container}>
       <RNCamera
         style={styles.camera}
         onBarCodeRead={handleBarCodeRead}
-        captureAudio={false}
-      >
+        captureAudio={false}>
         <View style={styles.overlay} />
         <View style={styles.rectangleContainer}>
           <View style={styles.rectangle} />
@@ -49,12 +91,9 @@ const Scan = () => {
       {loading && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#ffffff" />
-          <Text style={styles.loadingText}>Processing...</Text>
+          <Text style={styles.loadingText}>กำลังประมวลผล...</Text>
         </View>
       )}
-      <View style={styles.bottomView}>
-        <Text style={styles.text}>Scanned Data: {scannedData}</Text>
-      </View>
     </View>
   );
 };
@@ -64,6 +103,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   camera: {
     flex: 1,
@@ -86,15 +127,6 @@ const styles = StyleSheet.create({
     borderColor: '#00FF00',
     backgroundColor: 'transparent',
   },
-  bottomView: {
-    width: '100%',
-    height: 50,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 0,
-  },
   loadingContainer: {
     position: 'absolute',
     top: 0,
@@ -104,15 +136,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 999, 
+    zIndex: 999,
   },
   loadingText: {
     color: '#ffffff',
     marginTop: 10,
-  },
-  text: {
-    color: 'white',
-    fontSize: 15,
   },
 });
 
