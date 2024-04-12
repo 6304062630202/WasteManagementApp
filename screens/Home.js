@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/Home-style';
@@ -8,6 +8,7 @@ import { SIZE } from '../contrants/SIZE';
 import { COLORS } from '../contrants/COLORS';
 import Map from '../screens/Map';
 import KnowledgeList from '../screens/KnowledgeList';
+import GreenList from './GreenList';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -17,7 +18,7 @@ const Home = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { flexGrow: 1 }]}>
       {/* แถบค้นหา */}
       <View style={styles.searchContainer}>
         <TouchableOpacity
@@ -34,6 +35,7 @@ const Home = () => {
 
       <Map />
       <KnowledgeList />
+      <GreenList />
 
     </ScrollView>
   );

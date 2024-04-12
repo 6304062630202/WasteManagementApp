@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Image, TouchableOpacity, StyleSheet, Linking} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Linking,
+} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   faUser,
@@ -8,8 +15,7 @@ import {
   faSignOutAlt,
   faAngleRight,
 } from '@fortawesome/free-solid-svg-icons';
-import {collection, query, where, getDocs} from 'firebase/firestore';
-import {db} from '../firebase';
+import axios from 'axios';
 import {useFocusEffect} from '@react-navigation/native';
 
 const Setting = ({route, navigation}) => {
@@ -18,17 +24,23 @@ const Setting = ({route, navigation}) => {
 
   const fetchUserData = async () => {
     try {
-      const usersCollectionRef = collection(db, 'Users');
-      const userQuery = query(
-        usersCollectionRef,
-        where('username', '==', username),
+      const response = await axios.post(
+        'https://wasteappmanage.sci.kmutnb.ac.th/userData.php',
+        {
+          username: username,
+        },
       );
-      const querySnapshot = await getDocs(userQuery);
 
-      if (!querySnapshot.empty) {
-        // ถ้าพบข้อมูลผู้ใช้
-        const userData = querySnapshot.docs[0].data();
-        setUserData(userData);
+      const userData = response.data;
+
+      if (userData && userData.length > 0) {
+        // ดึงข้อมูลผู้ใช้ที่ตรงกับ username จาก API แล้วกำหนดให้เป็นข้อมูลผู้ใช้
+        const currentUser = userData.find(user => user.username === username);
+        if (currentUser) {
+          setUserData(currentUser);
+        } else {
+          console.log('ไม่พบข้อมูลผู้ใช้');
+        }
       } else {
         console.log('ไม่พบข้อมูลผู้ใช้');
       }
@@ -61,13 +73,20 @@ const Setting = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <View style={[styles.profileSection, styles.shadow]}>
-        <Image
-          source={userData?.profileImage ? {uri: userData.profileImage} : require('../image/user.png')}
-          style={styles.profileImage}
-        />
+        <View style={styles.profileImageContainer}>
+          <Image
+            source={
+              userData && userData.profileImage !== 'null'
+                ? {uri: userData.profileImage}
+                : require('../image/user.png')
+            }
+            style={styles.profileImage}
+          />
+        </View>
         <View style={styles.profileInfo}>
           <Text style={styles.displayName}>{userData?.displayname}</Text>
           <Text style={styles.email}>{userData?.email}</Text>
+          <Text style={styles.coins}>คะแนน : {userData?.coins}</Text>
         </View>
       </View>
 
@@ -75,18 +94,14 @@ const Setting = ({route, navigation}) => {
         <MenuItem
           icon={faUser}
           label="บัญชีของฉัน"
-          onPress={() => navigation.navigate('MyAccount', { username: username })}
+          onPress={() => navigation.navigate('MyAccount', {username: username})}
         />
         <MenuItem
           icon={faHistory}
           label="ประวัติการสแกน"
-          onPress={() => navigation.navigate('History', { username: username })}
+          onPress={() => navigation.navigate('History', {username: username})}
         />
-        <MenuItem
-          icon={faPhone}
-          label="ติดต่อเรา"
-          onPress={handleContactUs}
-        />
+        <MenuItem icon={faPhone} label="ติดต่อเรา" onPress={handleContactUs} />
         <MenuItem
           icon={faSignOutAlt}
           label="ออกจากระบบ"
@@ -112,7 +127,7 @@ const MenuItem = ({icon, label, onPress}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
   },
   profileSection: {
     flexDirection: 'row',
@@ -122,6 +137,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     height: 150,
+    backgroundColor: '#FFDFA1',
   },
   shadow: {
     shadowColor: '#333',
@@ -133,23 +149,33 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2,
   },
+  profileImageContainer: {
+    marginRight: 8,
+  },
   profileImage: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
     borderRadius: 50,
   },
   profileInfo: {
-    marginLeft: 20,
+    flex: 1,
+    marginLeft: 10,
   },
   displayName: {
     fontSize: 22,
     fontWeight: 'bold',
     paddingBottom: 5,
-    color: '#000'
+    color: '#000',
   },
   email: {
     fontSize: 14,
     color: '#000',
+  },
+  coins: {
+    fontSize: 16,
+    color: '#6C626E',
+    fontWeight: 'bold',
+    paddingTop: 5,
   },
   menuSection: {
     marginTop: 20,

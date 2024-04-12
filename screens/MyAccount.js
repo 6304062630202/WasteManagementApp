@@ -1,34 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Button, Alert, Platform } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import React, {useState, useEffect} from 'react';
+import {
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  TextInput,
+  Button,
+  Alert,
+  Platform,
+} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faArrowLeft} from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 import ImagePicker from 'react-native-image-crop-picker';
 
-const MyAccount = ({ route }) => {
+const MyAccount = ({route}) => {
   const navigation = useNavigation();
-  const { username } = route.params;
+  const {username} = route.params;
   const [userData, setUserData] = useState(null);
   const [displayName, setDisplayName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userDocRef = doc(db, 'Users', username);
-        const userDocSnapshot = await getDoc(userDocRef);
+        const response = await axios.post(
+          'https://wasteappmanage.sci.kmutnb.ac.th/userData.php',
+          {username: username},
+        );
 
-        if (userDocSnapshot.exists()) {
-          const userData = userDocSnapshot.data();
-          setUserData(userData);
-          setDisplayName(userData.displayname);
-          setPhoneNumber(userData.phoneNumber || '');
-          // Set profile image if available
-          if (userData.profileImage) {
-            setProfileImage(userData.profileImage);
+        const userData = response.data;
+        if (userData && userData.length > 0) {
+          const currentUser = userData.find(user => user.username === username);
+          if (currentUser) {
+            setUserData(currentUser);
+            setDisplayName(currentUser.displayname);
+            setProfileImage(currentUser.profileImage);
+          } else {
+            console.log('ไม่พบข้อมูลผู้ใช้');
           }
         } else {
           console.log('ไม่พบข้อมูลผู้ใช้');
@@ -47,21 +59,23 @@ const MyAccount = ({ route }) => {
 
   const saveUserData = async () => {
     try {
-      const userDocRef = doc(db, 'Users', username);
-      await updateDoc(userDocRef, {
-        displayname: displayName,
-        phoneNumber: phoneNumber,
-        profileImage: profileImage 
-      });
+      await axios.post(
+        'https://wasteappmanage.sci.kmutnb.ac.th/updateUserData.php',
+        {
+          username: username,
+          displayname: displayName,
+          profileImage: profileImage,
+        },
+      );
+
       console.log('บันทึกข้อมูลผู้ใช้เรียบร้อยแล้ว');
-      Alert.alert('บันทึกข้อมูลผู้ใช้เรียบร้อย')
+      Alert.alert('บันทึกข้อมูลผู้ใช้เรียบร้อย');
 
       // อัปเดตข้อมูลที่แสดงใน TextInput เมื่อมีการบันทึกข้อมูล
       setUserData({
         ...userData,
         displayname: displayName,
-        phoneNumber: phoneNumber,
-        profileImage: profileImage
+        profileImage: profileImage,
       });
     } catch (error) {
       console.error('เกิดข้อผิดพลาดในการบันทึกข้อมูลผู้ใช้:', error);
@@ -73,18 +87,20 @@ const MyAccount = ({ route }) => {
       width: 1200,
       height: 1200,
       cropping: true,
-    }).then((image) => {
-      if (!image) {
-        // ผู้ใช้ยกเลิกการเลือกรูปภาพ
-        return;
-      }
+    })
+      .then(image => {
+        if (!image) {
+          // ผู้ใช้ยกเลิกการเลือกรูปภาพ
+          return;
+        }
 
-      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-      setProfileImage(imageUri);
-    }).catch((error) => {
-      console.error('เกิดข้อผิดพลาดในการเลือกรูปภาพ:', error);
-    });
-  };  
+        const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+        setProfileImage(imageUri);
+      })
+      .catch(error => {
+        console.error('เกิดข้อผิดพลาดในการเลือกรูปภาพ:', error);
+      });
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -98,12 +114,15 @@ const MyAccount = ({ route }) => {
       {userData && (
         <View style={styles.userDataContainer}>
           <TouchableOpacity onPress={choosePhotoFromLibrary}>
-            {profileImage ? (
-              <Image source={{ uri: profileImage }} style={styles.profileImage} />
+            {profileImage && profileImage !== 'null' ? (
+              <Image source={{uri: profileImage}} style={styles.profileImage} />
             ) : (
-              <Image source={require('../image/user.png')} style={styles.profileImage} />
+              <Image
+                source={require('../image/user.png')}
+                style={styles.profileImage}
+              />
             )}
-            <Text style={{ textAlign: 'center' }}>เปลี่ยนรูปโปรไฟล์</Text>
+            <Text style={{textAlign: 'center'}}>เปลี่ยนรูปโปรไฟล์</Text>
           </TouchableOpacity>
           <View style={styles.userData}>
             <Text style={styles.label}>ชื่อผู้ใช้ :</Text>
@@ -113,22 +132,30 @@ const MyAccount = ({ route }) => {
               onChangeText={setDisplayName}
             />
             <Text style={styles.label}>อีเมล :</Text>
-            <TextInput style={styles.disabledInput} value={userData.email} editable={false} />
-            <Text style={styles.label}>ชื่อภาษาอังกฤษ :</Text>
-            <TextInput style={styles.disabledInput} value={userData.firstname_en} editable={false} />
-            <Text style={styles.label}>นามสกุลภาษาอังกฤษ :</Text>
-            <TextInput style={styles.disabledInput} value={userData.lastname_en} editable={false} />
-            <Text style={styles.label}>ประเภทบัญชีผู้ใช้งาน :</Text>
-            <TextInput style={styles.disabledInput} value={userData.account_type} editable={false} />
-            <Text style={styles.label}>เลขประจำตัวประชาชน :</Text>
-            <TextInput style={styles.disabledInput} value={userData.pid} editable={false} />
-            <Text style={styles.label}>เบอร์โทร :</Text>
             <TextInput
-              style={styles.input}
-              placeholder="เบอร์โทร"
-              onChangeText={setPhoneNumber}
-              value={phoneNumber}
+              style={styles.disabledInput}
+              value={userData.email}
+              editable={false}
             />
+            <Text style={styles.label}>ชื่อภาษาอังกฤษ :</Text>
+            <TextInput
+              style={styles.disabledInput}
+              value={userData.firstname_en}
+              editable={false}
+            />
+            <Text style={styles.label}>นามสกุลภาษาอังกฤษ :</Text>
+            <TextInput
+              style={styles.disabledInput}
+              value={userData.lastname_en}
+              editable={false}
+            />
+            <Text style={styles.label}>เลขประจำตัวประชาชน :</Text>
+            <TextInput
+              style={styles.disabledInput}
+              value={userData.pid}
+              editable={false}
+            />
+
             <TouchableOpacity style={styles.button} onPress={saveUserData}>
               <Text style={styles.buttonText}>บันทึก</Text>
             </TouchableOpacity>
@@ -142,7 +169,7 @@ const MyAccount = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
   },
   header: {
     flexDirection: 'row',
@@ -151,7 +178,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-    backgroundColor: '#fff',
+    backgroundColor: '#ffebcd',
     shadowColor: '#000',
     elevation: 5,
   },
