@@ -32,7 +32,7 @@ $currentCount = $countRow['count'];
 if ($currentCount >= 3) {
   echo json_encode(array("success" => false, "message" => "คุณสแกน waste_no นี้ครบ 3 ครั้งแล้ว"));
 } else {
-  // อัปเดตคะแนน (coins) ของผู้ใช้โดยรวมกับ coins ที่มีอยู่ในฐานข้อมูล
+  // อัปเดตเหรียญ (coins) ของผู้ใช้โดยรวมกับ coins ที่มีอยู่ในฐานข้อมูล
   $sql = "UPDATE users SET coins = coins + $coin WHERE username = '$username'";
   
   if ($conn->query($sql) === TRUE) {

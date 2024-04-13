@@ -86,7 +86,7 @@ const Setting = ({route, navigation}) => {
         <View style={styles.profileInfo}>
           <Text style={styles.displayName}>{userData?.displayname}</Text>
           <Text style={styles.email}>{userData?.email}</Text>
-          <Text style={styles.coins}>คะแนน : {userData?.coins}</Text>
+          <Text style={styles.coins}>เหรียญ : {userData?.coins}</Text>
         </View>
       </View>
 

@@ -61,7 +61,7 @@ const ProductSearch = ({ route }) => {
                 <Text style={styles.detail}>{wasteData.waste_no}</Text>
                 <Text style={styles.description}>ประเภท : {wasteData.waste_type}</Text>
                 <Text style={[styles.description, { paddingBottom: 10 }]}>
-                  คะแนนที่จะได้รับ : {wasteData.coin}
+                  เหรียญที่จะได้รับ : {wasteData.coin}
                 </Text>
                 <View style={styles.dataContainer}>
                   <Text style={styles.recycle}>{wasteData.recycle}</Text>

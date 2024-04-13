@@ -20,7 +20,7 @@ const ScanQR = ({ route }) => {
     setLoading(true);
     try {
       if (data === 'https://get-qr.com/xwU0e8') {
-        Alert.alert('คุณได้สะสมคะแนนแล้ว');
+        Alert.alert('คุณได้สะสมเหรียญแล้ว');
 
         const response = await axios.post(
           'https://wasteappmanage.sci.kmutnb.ac.th/updateCoins.php',
@@ -35,18 +35,18 @@ const ScanQR = ({ route }) => {
 
         if (response.data.success) {
           setIsPointAdded(true);
-        //   Alert.alert('คุณได้สะสมคะแนนแล้ว');
+        //   Alert.alert('คุณได้สะสมเหรียญแล้ว');
           navigation.goBack();
         } else {
-          Alert.alert('สะสมคะแนนไม่สำเร็จ','วันนี้คุณสะสมคะแนนชิ้นนี้ครบ 3 ครั้งแล้ว');
+          Alert.alert('สะสมเหรียญไม่สำเร็จ','วันนี้คุณสะสมเหรียญชิ้นนี้ครบ 3 ครั้งแล้ว');
           navigation.goBack();
         }
       } else {
         Alert.alert('บาร์โค้ดไม่ถูกต้อง');
       }
     } catch (error) {
-      // console.error('เกิดข้อผิดพลาดในการสะสมคะแนน:', error);
-      Alert.alert('เกิดข้อผิดพลาดในการสะสมคะแนน');
+      // console.error('เกิดข้อผิดพลาดในการสะสมเหรียญ:', error);
+      Alert.alert('เกิดข้อผิดพลาดในการสะสมเหรียญ');
     } finally {
       setLoading(false);
     }

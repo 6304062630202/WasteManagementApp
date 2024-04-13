@@ -46,7 +46,7 @@ const History = ({route}) => {
       <Text style={styles.historyText}>
         คุณได้สแกนขยะประเภท "{item.waste_type}"
       </Text>
-      <Text style={styles.historyText}>ได้รับ {item.coins} คะแนน</Text>
+      <Text style={styles.historyText}>ได้รับ {item.coins} เหรียญ</Text>
       <Text style={styles.historyTextDate}>
         วันที่: {new Date(item.date_created).toLocaleString()}
       </Text>

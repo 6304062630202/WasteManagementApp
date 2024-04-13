@@ -25,7 +25,7 @@ const ProductDetail = ({ route }) => {
 
   const addCoins = () => {
     if (isPointAdded) {
-      Alert.alert('คุณได้สะสมคะแนนแล้ว');
+      Alert.alert('คุณได้สะสมเหรียญแล้ว');
     } else {
       navigation.navigate('ScanQR', {
         wasteData,
@@ -79,7 +79,7 @@ const ProductDetail = ({ route }) => {
                   ประเภท : {wasteData.waste_type}
                 </Text>
                 <Text style={[styles.description, { paddingBottom: 10 }]}>
-                  คะแนนที่จะได้รับ : {wasteData.coin}
+                  เหรียญที่จะได้รับ : {wasteData.coin}
                 </Text>
 
                 <View style={styles.dataContainer}>
@@ -115,7 +115,7 @@ const ProductDetail = ({ route }) => {
             ]}
             disabled={isPointAdded}>
             <Text style={styles.buttonText}>
-              {isPointAdded ? 'สะสมคะแนนแล้ว' : 'สแกนคิวอาร์โค้ด'}
+              {isPointAdded ? 'สะสมเหรียญแล้ว' : 'สแกนคิวอาร์โค้ด'}
             </Text>
           </TouchableOpacity>
         </View>

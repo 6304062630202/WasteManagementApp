@@ -88,14 +88,14 @@ const Coins = ({ route }) => {
               style={{ width: 70, height: 70, marginLeft: 20 }}
             />
             <View style={styles.textContainer}>
-              <Text style={styles.text}>คะแนนของฉัน :</Text>
+              <Text style={styles.text}>เหรียญของฉัน :</Text>
               <Text style={styles.coin}>{coins !== null ? coins : '0'}</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.boxContainer}>
-          <Text style={styles.title}>การสแกนเพื่อรับคะแนนล่าสุด :</Text>
+          <Text style={styles.title}>การสแกนเพื่อรับเหรียญล่าสุด :</Text>
           {history.length > 0 ? (
             <FlatList
               data={history.slice().reverse().slice(0, 10)}
