@@ -24,16 +24,6 @@ const GreenKmutnb = () => {
         <WebView
           source={{ uri: 'https://green.kmutnb.ac.th/' }}
           style={styles.webView}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          scrollEnabled={true}
-          mixedContentMode="always"
-          onError={error => console.error('WebView error:', error)}
-          renderError={errorName => (
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>Error loading content.</Text>
-            </View>
-          )}
         />
       </View>
     </View>
@@ -78,15 +68,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    fontSize: 16,
-    color: 'red',
   },
 });
 
