@@ -1,12 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Linking } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
 const GreenList = () => {
-  const navigation = useNavigation();
 
   const handlePressWebsite = () => {
-    navigation.navigate('GreenKmutnb');
+    Linking.openURL('https://green.kmutnb.ac.th/');
   };
 
   const handlePressFanpage = () => {

@@ -13,7 +13,6 @@ import Scan from './screens/Scan';
 import ProductDetail from './screens/ProductDetail';
 import NavBar from './screens/NavBar';
 import ProductSearch from './screens/ProductSearch';
-import GreenKmutnb from './screens/GreenKmutnb';
 import ScanQR from './screens/ScanQR';
 import Condition from './screens/Condition';
 
@@ -79,11 +78,6 @@ const App = () => {
         <Stack.Screen
           name="ProductSearch"
           component={ProductSearch}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="GreenKmutnb"
-          component={GreenKmutnb}
           options={{ headerShown: false }}
         />
         <Stack.Screen
