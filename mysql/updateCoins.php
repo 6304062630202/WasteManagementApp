@@ -23,7 +23,7 @@ $image_url = $data->image_url;
 // ตั้งค่า charset เป็น UTF-8
 mysqli_set_charset($conn, "utf8");
 
-// ตรวจสอบว่า waste_no นี้ได้ถูกสแกนครบ 5 ครั้งต่อวันแล้วหรือยัง
+// ตรวจสอบว่า waste_no นี้ได้ถูกสแกนครบ 3 ครั้งต่อวันแล้วหรือยัง
 $countSql = "SELECT COUNT(*) as count FROM history WHERE username = '$username' AND waste_no = '$waste_no' AND waste_type = '$waste_type' AND image_url = '$image_url' AND DATE(date_created) = CURDATE()";
 $countResult = $conn->query($countSql);
 $countRow = $countResult->fetch_assoc();
