@@ -1,15 +1,9 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
 import React from 'react';
-import {WebView} from 'react-native-webview';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faArrowLeft} from '@fortawesome/free-solid-svg-icons';
-import {useNavigation} from '@react-navigation/native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { WebView } from 'react-native-webview';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const GreenKmutnb = () => {
   const navigation = useNavigation();
@@ -17,8 +11,6 @@ const GreenKmutnb = () => {
   const goBack = () => {
     navigation.goBack();
   };
-
-  const {width, height} = Dimensions.get('window');
 
   return (
     <View style={styles.container}>
@@ -30,15 +22,12 @@ const GreenKmutnb = () => {
       </View>
       <View style={styles.webViewContainer}>
         <WebView
-          source={{uri: 'https://green.kmutnb.ac.th/'}}
+          source={{ uri: 'https://green.kmutnb.ac.th/' }}
           style={styles.webView}
           javaScriptEnabled={true}
           domStorageEnabled={true}
-          useWebKit={true}
           scrollEnabled={true}
           mixedContentMode="always"
-          cacheEnabled={true}
-          androidHardwareAccelerationEnabled={true}
           onError={error => console.error('WebView error:', error)}
           renderError={errorName => (
             <View style={styles.errorContainer}>
@@ -81,15 +70,23 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   webViewContainer: {
+    flex: 1,
     width: '100%',
     height: '100%',
-    alignSelf: 'center',
-    overflow: 'hidden',
   },
   webView: {
     flex: 1,
     width: '100%',
     height: '100%',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: 16,
+    color: 'red',
   },
 });
 
