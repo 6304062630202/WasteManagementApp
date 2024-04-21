@@ -29,7 +29,7 @@ const Home = () => {
             size={SIZE.FONT_SIZE_LARGE}
             color={COLORS.SECONDARY_COLOR}
           />
-          <Text>วิธีการแยกขยะ, จัดการขยะ...</Text>
+          <Text>ชื่อขยะประเภทเครื่องดื่ม</Text>
         </TouchableOpacity>
       </View>
 
