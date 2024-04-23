@@ -19,12 +19,9 @@ const Scan = ({ route }) => {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        'https://wasteappmanage.sci.kmutnb.ac.th/wastes.php'
-      );
-
+      // เช็คข้อมูลจาก API
+      const response = await fetch('https://wasteappmanage.sci.kmutnb.ac.th/wastes.php');
       const result = await response.json();
-
       const foundWaste = result.find((waste) => waste.waste_no === data);
 
       if (foundWaste) {
@@ -40,9 +37,7 @@ const Scan = ({ route }) => {
             {
               text: 'เพิ่มข้อมูล',
               onPress: () =>
-                Linking.openURL(
-                  'https://wasteappmanage.sci.kmutnb.ac.th/webform.php?fbclid=IwAR3jZopLm-85Qa7pYd0IepsKTyHuIVd8NB15CtcWDlAvYQfCT4D_HzCTBT8_aem_AZuJQH0iYE4VosRiOl0mOwMPIlQWfVR09jAQU8t3Is4bhbLHXb4hZxs4xoe09B61y3RxHx303v8b_So6c0t_V5KY'
-                ),
+                Linking.openURL('https://wasteappmanage.sci.kmutnb.ac.th/webform.php?fbclid=IwAR3jZopLm-85Qa7pYd0IepsKTyHuIVd8NB15CtcWDlAvYQfCT4D_HzCTBT8_aem_AZuJQH0iYE4VosRiOl0mOwMPIlQWfVR09jAQU8t3Is4bhbLHXb4hZxs4xoe09B61y3RxHx303v8b_So6c0t_V5KY'),
             },
             {
               text: 'ยกเลิก',
@@ -54,10 +49,7 @@ const Scan = ({ route }) => {
       }
     } catch (error) {
       console.error('Error checking barcode:', error);
-      Alert.alert(
-        'เกิดข้อผิดพลาด',
-        'ไม่สามารถตรวจสอบบาร์โค้ดได้ กรุณาลองใหม่อีกครั้ง'
-      );
+      Alert.alert('เกิดข้อผิดพลาด', 'ไม่สามารถตรวจสอบบาร์โค้ดได้ กรุณาลองใหม่อีกครั้ง');
     } finally {
       setLoading(false);
     }
@@ -67,7 +59,7 @@ const Scan = ({ route }) => {
     <View style={styles.container}>
       <RNCamera
         style={styles.camera}
-        onBarCodeRead={handleBarCodeRead}
+        onBarCodeRead={loading ? undefined : handleBarCodeRead}
         captureAudio={false}>
         <View style={styles.overlay} />
         <View style={styles.rectangleContainer}>
