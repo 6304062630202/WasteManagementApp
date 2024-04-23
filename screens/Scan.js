@@ -17,40 +17,26 @@ const Scan = ({ route }) => {
 
   const handleBarCodeRead = async ({ data }) => {
     setLoading(true);
+
     try {
       const response = await fetch(
         'https://wasteappmanage.sci.kmutnb.ac.th/wastes.php'
       );
+
       const result = await response.json();
 
-      if (!result || result.length === 0) {
-        console.log('No data found');
-        Alert.alert('ไม่พบข้อมูล', 'ไม่พบข้อมูลสำหรับบาร์โค้ดที่สแกน', [
-          {
-            text: 'เพิ่มข้อมูล',
-            onPress: () =>
-              Linking.openURL(
-                'https://wasteappmanage.sci.kmutnb.ac.th/webform.php?fbclid=IwAR3jZopLm-85Qa7pYd0IepsKTyHuIVd8NB15CtcWDlAvYQfCT4D_HzCTBT8_aem_AZuJQH0iYE4VosRiOl0mOwMPIlQWfVR09jAQU8t3Is4bhbLHXb4hZxs4xoe09B61y3RxHx303v8b_So6c0t_V5KY'
-              ),
-          },
-          {
-            text: 'ยกเลิก',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-            https,
-          },
-        ]);
-      } else {
-        const foundWaste = result.find((waste) => waste.waste_no === data);
+      const foundWaste = result.find((waste) => waste.waste_no === data);
 
-        if (foundWaste) {
-          navigation.navigate('ProductDetail', {
-            wasteData: foundWaste,
-            username: username,
-          });
-        } else {
-          console.log('Barcode not found in wastes');
-          Alert.alert('ไม่พบข้อมูล', 'ไม่พบข้อมูลสำหรับบาร์โค้ดที่สแกน', [
+      if (foundWaste) {
+        navigation.navigate('ProductDetail', {
+          wasteData: foundWaste,
+          username: username,
+        });
+      } else {
+        Alert.alert(
+          'ไม่พบข้อมูล',
+          'ไม่พบข้อมูลสำหรับบาร์โค้ดที่สแกน',
+          [
             {
               text: 'เพิ่มข้อมูล',
               onPress: () =>
@@ -63,8 +49,8 @@ const Scan = ({ route }) => {
               onPress: () => console.log('Cancel Pressed'),
               style: 'cancel',
             },
-          ]);
-        }
+          ]
+        );
       }
     } catch (error) {
       console.error('Error checking barcode:', error);
