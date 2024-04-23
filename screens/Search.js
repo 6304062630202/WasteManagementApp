@@ -83,7 +83,7 @@ const Search = () => {
         <View style={styles.searchBox}>
           <TextInput
             style={styles.searchInput}
-            placeholder="พิมพ์เพื่อค้นหา..."
+            placeholder="พิมพ์ชื่อขยะประเภทเครื่องดื่ม..."
             value={searchInput}
             onChangeText={text => setSearchInput(text)}
           />
